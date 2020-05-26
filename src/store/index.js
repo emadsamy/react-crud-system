@@ -1,0 +1,1 @@
+export { registerAuth, loginAuth } from './actions';

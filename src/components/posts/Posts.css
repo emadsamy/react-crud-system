@@ -1,0 +1,27 @@
+.post-box {
+    padding: 20px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    position: relative;
+    background: #FFF;
+}
+
+.post-content {
+    padding-right: 150px
+}
+
+.post-text {
+    word-wrap: break-word;
+}
+
+.post-tools {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 20px;
+}
+
+.post-tools button {
+    margin-left: 10px
+}

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Spinner } from 'reactstrap';
 import axios from 'axios';
+import * as actions from '../../store/index';
 
 const ModalDelete = (props) => {
   const {
@@ -18,13 +20,16 @@ const ModalDelete = (props) => {
     axios.delete('http://laravelblog77.herokuapp.com/api/v1/posts/' + props.postID)
       .then(res => {
         console.log(res);
-        setModal(!modal);
+        props.getPosts();
+        setModal(!modal)
         setLoading(false);
       })
       .catch(error => {
         console.log(error);
         setLoading(false);
+        setModal(!modal)
       });
+    setModal(false);
   }
 
   return (
@@ -42,4 +47,10 @@ const ModalDelete = (props) => {
   );
 }
 
-export default ModalDelete;
+const mapDispatchToProps = dispatch => {
+    return {
+        getPosts: () => dispatch(actions.postsGet())
+    }
+}
+
+export default connect(null, mapDispatchToProps)(ModalDelete);

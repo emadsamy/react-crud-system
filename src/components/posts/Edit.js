@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input, Alert, Spinner } from 'reactstrap';
 import axios from 'axios';
+import * as actions from '../../store/index';
 
 const ModalEdit = (props) => {
   const {
@@ -30,6 +32,7 @@ const ModalEdit = (props) => {
         console.log(res);
         setLoadingUpdate(false);
         setModal(!modal);
+        props.getPosts();
       })
       .catch(error => {
         setLoadingUpdate(false);
@@ -66,4 +69,10 @@ const ModalEdit = (props) => {
   );
 }
 
-export default ModalEdit;
+const mapDispatchToProps = dispatch => {
+  return {
+      getPosts: () => dispatch(actions.postsGet())
+  }
+}
+
+export default connect(null, mapDispatchToProps)(ModalEdit);

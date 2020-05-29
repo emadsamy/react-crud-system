@@ -6,8 +6,13 @@ import Posts from '../components/posts/Post';
 import { Form, FormGroup, Label, Input, Button, Alert, Spinner } from 'reactstrap';
 import axios from 'axios';
 import Loader from '../components/loader/Loader';
+import * as actions from '../store/index';
 
 class Home extends Component {
+    constructor(props) {
+        super(props);
+        this.props.getPosts();
+    }
     state = {
         post_content: "",
         post_image: "image.png",
@@ -15,29 +20,13 @@ class Home extends Component {
         success: false,
         error: false,
         addPostDisabled: true,
-        posts: [],
-        postsLoading: false
+        posts: []
     }
 
     componentDidMount() {
         document.title = "Home";
-        this.getPosts();
-    }
-
-    getPosts() {
-        this.setState({postsLoading: true});
-        axios.get("http://laravelblog77.herokuapp.com/api/v1/posts")
-            .then(response => {
-                console.log(response.data);
-                const data = response.data.data;
-                console.log(data);
-                this.setState({ posts : data });
-                this.setState({ postsLoading: false });
-            })
-            .catch(err => {
-                console.log(err);
-                this.setState({postsLoading: false});
-            });
+        // this.props.getPosts();
+        console.log(this.props.posts);
     }
 
     onPostHandler = (event) => {
@@ -50,8 +39,8 @@ class Home extends Component {
         };
         axios.post("http://laravelblog77.herokuapp.com/api/v1/posts", data)
             .then(res => {
-                this.setState({loading: false, success: true, error: false, post_content: ""});
-                this.getPosts();
+                this.setState({loading: false, success: true, error: false, post_content: "", addPostDisabled: true});
+                this.props.getPosts();
             })
             .catch(err => {
                 this.setState({loading: false, success: false, error: true});
@@ -72,7 +61,7 @@ class Home extends Component {
         }
 
         let posts = "";
-        posts = this.state.posts.map((post, index) => {
+        posts = this.props.posts.map((post, index) => {
             return <Posts 
                         key={index} 
                         user={post.post_by_user.name} 
@@ -82,6 +71,7 @@ class Home extends Component {
                         postText={post.post_content} />;
         });
 
+        // console.log(this.props.getPosts());
         return (
             <div className="home">
                 <NavigationBar color="dark" dark />
@@ -108,8 +98,18 @@ class Home extends Component {
                     </div>
 
                     <div className="post-view">
-                        {this.state.postsLoading ? <div className="posts-loading"><Loader /></div> : null}
-                        {posts ? posts : <div className="dont-have-posts">Dont Have Any Post.</div> }
+                        {this.props.postsLoading ? <div className="posts-loading"><Loader /></div> : null}
+                        {
+                            this.props.posts.map((post, index) => {
+                                return <Posts 
+                                            key={index} 
+                                            user={post.post_by_user.name} 
+                                            postId={post.id}
+                                            userID={post.post_by_user.id}
+                                            email={post.post_by_user.email}
+                                            postText={post.post_content} />;
+                            })
+                        }
                     </div>
                 </div>
             </div>
@@ -119,8 +119,16 @@ class Home extends Component {
 
 const mapStateToProps = state => {
     return {
-        authType: state.authType
+        authType: state.authType,
+        posts: state.posts,
+        postsLoading: state.postsLoading
     }
 }
 
-export default withRouter(connect(mapStateToProps)(Home));
+const mapDispatchToProps = dispatch => {
+    return {
+        getPosts: () => dispatch(actions.postsGet())
+    }
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Home));

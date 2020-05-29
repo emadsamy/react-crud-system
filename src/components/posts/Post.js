@@ -5,6 +5,7 @@ import './Posts.css';
 import { Button } from 'reactstrap';
 import ModalDelete from './Delete';
 import ModalEdit from './Edit';
+import * as actions from '../../store/index';
 
 class Post extends Component {
  render() {

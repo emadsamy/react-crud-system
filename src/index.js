@@ -18,7 +18,7 @@ const persistConfig = {
     key: 'authType',
     storage: storage,
     whitelist: ['authType'] // which reducer want to store
-  };
+};
 const pReducer = persistReducer(persistConfig, reducer);
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

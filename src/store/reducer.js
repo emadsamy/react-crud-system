@@ -5,7 +5,10 @@ const initsalState = {
     error: null,
     registerSuccess: false,
     loginSuccess: false,
-    authType: ""
+    authType: "",
+    posts: [],
+    postsLoading: false,
+    postsError: ""
 }
 
 const applySetUserType = (state, action) => ({
@@ -46,6 +49,23 @@ const reducer = (state = initsalState, action) => {
         case actionTypes.AUTH_LOGOUT:
             return {
                 ...state
+            };
+        case actionTypes.START_POSTS:
+            return {
+                ...state,
+                postsLoading: true
+            };
+        case actionTypes.SUCCESS_POSTS:
+            return {
+                ...state,
+                postsLoading: false,
+                posts: action.posts
+            };
+        case actionTypes.FAIL_POSTS:
+            return {
+                ...state,
+                postsLoading: false,
+                postsError: action.error
             };
         default:
             return state;

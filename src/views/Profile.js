@@ -1,18 +1,30 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-// import * as actions from '../../store/index';
-// import Loader from '../../components/loader/Loader';
 import NavigationBar from '../components/Navbar';
 import ListGroup from '../components/ListGroupItems';
 import './views.css';
+import Posts from '../components/posts/Post';
+import axios from 'axios';
 
 class Profile extends Component {
     state = {
-        testProfile: ""
+        testProfile: "",
+        userPosts: []
     }
     componentDidMount() {
         document.title = `Welcome ${this.props.authType.email}`;
+        axios.get('https://laravelblog77.herokuapp.com/api/v1/posts_users/' + this.props.authType.id)
+            .then((res) => {
+                const data = res.data.data;
+                console.log(data);
+                console.log(res);
+                console.log(this.props.authType.id);
+                this.setState({ userPosts: data });
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     }
 
     render() {
@@ -21,6 +33,17 @@ class Profile extends Component {
         if (!token) {
             redirect = <Redirect to="/login" />
         }
+
+        let posts = "";
+        posts = this.state.userPosts.map((post, index) => {
+            return <Posts
+                    key={index} 
+                    user={this.props.authType.name} 
+                    postId={post.id}
+                    userID={this.props.authType.id}
+                    email={this.props.authType.email}
+                    postText={post.post_content} />
+        });
 
         return (
             <div className="profile-container">
@@ -35,6 +58,7 @@ class Profile extends Component {
                         email={this.props.authType.email}
                         avatar={this.props.authType.avatar}
                         birthdate={this.props.authType.birthdate} />
+                    {posts}
                 </div>
             </div>
         );
